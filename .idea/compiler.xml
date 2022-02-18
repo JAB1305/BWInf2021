@@ -9,5 +9,8 @@
         <module name="BWInf21" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="BWInf21" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
