@@ -2,18 +2,20 @@ package de.jab_1305.bwinf21.runde2.aufgabe3.model;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Data
 public class Move {
 
+    Digit digit;
     Num num1;
     Num num2;
     int B; // Bilanz des Zuges -> +3 - Zug "gibt drei Bars ab" oder -2 Zug "brauch 2 Bars"
     int N; // Required moves ! NOT in addition to B. Moving Bars out of the pool (positive B) is not counted here.
     int absoluteDiff; // Increase on that digit that is achieved by using this operation.
 
-    public Move(Num num1, Num num2) {
+    public Move(Num num1, Num num2, Digit digit) {
         this.num1 = num1;
         this.num2 = num2;
 
@@ -32,7 +34,14 @@ public class Move {
         if (this.B > 0) {
             this.N = (this.N - this.B) / 2;
         }
+        if (this.B == 0) {
+            this.N = requiredMoves / 2;
+        }
+
+        this.digit = digit;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -54,6 +63,7 @@ public class Move {
                 ", num2=" + num2.getAbsolute() +
                 ", B=" + B +
                 ", N=" + N +
+                ", pos=" + this.digit.getPos() +
                 '}';
     }
 }

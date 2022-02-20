@@ -8,36 +8,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Edit implements Cloneable {
+public class Edit implements Cloneable, Comparable {
 
     //TODO: Besseren Klassennamen für den Chonker
 
-    private List<Num> startNum;
     private final Stack<Move> movesDone;
-    private final List<Integer> diff;
+    private Double totalDiff = 0.0;
 
-    public Edit(List<Num> startNum) {
-        this.startNum = startNum;
+    private int totalN;
+    private int totalB;
+
+    public Edit() {
         this.movesDone = new Stack<>();
-        this.diff = new ArrayList<>();
     }
 
     public void add(Move move) {
         this.movesDone.add(move);
-        this.diff.add(move.getAbsoluteDiff());
+        this.totalDiff += move.getAbsoluteDiff() * Math.pow(16, move.getDigit().getPos());
+        this.totalN += move.getN();
+        this.totalB += move.getB();
     }
+
+    public boolean isValid(int maxN) {
+        return this.totalB == 0 && this.totalN <= maxN
+                && this.totalN > 0;
+    }
+
 
     @Override
     public Edit clone() {
         try {
             Edit clone = (Edit) super.clone();
-            List<Num> startNum = clone.getStartNum();
-            Stack<Move> movesDone = (Stack<Move>) clone.getMovesDone().clone();
-            List<Integer> diff = clone.getDiff();
-            return new Edit(new ArrayList<>(startNum), movesDone, new ArrayList<>(diff));
+            Object clonedStack = clone.getMovesDone().clone();
+            Stack<Move> movesDone = (Stack<Move>) clonedStack;
+            return new Edit(movesDone, clone.getTotalDiff(), clone.getTotalN(), clone.getTotalB());
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
@@ -46,8 +53,20 @@ public class Edit implements Cloneable {
     @Override
     public String toString() {
         return "\nPath:" +
-                "\n   -> startNum=" + startNum +
                 "\n   -> movesDone=" + movesDone.toString() +
-                "\n   -> diff=" + diff;
+                "\n   -> total=" + totalDiff +
+                " | N:" + totalN +
+                " | B:" + totalB;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof Edit edit)) {
+            return 0;
+        }
+        if (edit.getTotalDiff() > this.getTotalDiff()) {
+            return 0;
+        }
+        return 1;
     }
 }

@@ -13,6 +13,7 @@ import java.util.Set;
 public enum Num {
 
     //18.02.2022 15:41 - All valid, based on BWInf patterns
+    //TODO: B and N are kinda sus
 
     ZERO(0, "0", new boolean[]{true, true, true, true, true, true, false}),
     ONE(1, "1", new boolean[]{false, true, true, false, false, false, false}),
@@ -53,15 +54,7 @@ public enum Num {
         return biggerNums;
     }
 
-    // TODO: Consider nMAX
 
-    public ArrayList<Move> getAllPossibleMoves() {
-        ArrayList<Move> moves = new ArrayList<>();
-        for (Num allBiggerOne : getAllBiggerOnes()) {
-            moves.add(new Move(this, allBiggerOne));
-        }
-        return moves;
-    }
 
     public static ArrayList<Num> valueOfMultipleDigitString(String s) {
         ArrayList<Num> value = new ArrayList<>();

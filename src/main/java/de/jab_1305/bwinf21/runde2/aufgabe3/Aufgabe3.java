@@ -1,59 +1,83 @@
 package de.jab_1305.bwinf21.runde2.aufgabe3;
 
-import de.jab_1305.bwinf21.runde2.aufgabe3.model.Edit;
-import de.jab_1305.bwinf21.runde2.aufgabe3.model.Move;
-import de.jab_1305.bwinf21.runde2.aufgabe3.model.Num;
+import de.jab_1305.bwinf21.runde2.aufgabe3.formatting.SevenSegmetFormatter;
+import de.jab_1305.bwinf21.runde2.aufgabe3.model.*;
+
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Aufgabe3 {
     public static void main(String[] args) {
-
-        Edit edit1 = new Edit(new ArrayList<>());
-        Edit edit2 = edit1.clone();
-        edit2.add(new Move(Num.ONE, Num.TWO));
-        System.out.println(edit1.toString());
-
-
-
-
         String number = "D24";
         int nMax = 3;
 
         ArrayList<Num> numList = Num.valueOfMultipleDigitString(number);
-        // This List is already sorted by digit, starting with the first one
-
-        int count = 0;
-
-        Map<Num, ArrayList<Move>> possibleMovesByN1 = new HashMap<>();
-        for (Num num1 : Num.values()) {
-            ArrayList<Move> possibilities = new ArrayList<>();
-            for (Num num2 : num1.getAllBiggerOnes()) {
-                Move move = new Move(num1, num2);
-                if (move.getN() <= nMax) {
-                    possibilities.add(move);
-                }
-            }
-            possibilities.sort((o1, o2) -> (o1.getAbsoluteDiff() > o2.getAbsoluteDiff()) ? 1 : 0);
-            possibleMovesByN1.put(num1, possibilities);
+        // This List is already sorted by digit, starting with the first one we convert them
+        // Digit just works as a wrapperclass here, so we can have the same Num at multiple positions
+        ArrayList<Digit> digits = new ArrayList<>();
+        int pos = numList.size() - 1;
+        for (Num num : numList) {
+            digits.add(new Digit(num, pos));
+            pos--;
         }
 
-        // PossibleMovesByN1 now contains all Moves that can be executed on the digits
+        Move m = new Move(Num.D, Num.E, new Digit(Num.D, 2));
+        System.out.println(m);
+
+        System.out.println(digits);
+
         // Starting with the first digit, we can now start to calculate our optimal result
 
-        List<Edit> paths = generateAllSubPathes(new Edit(numList), numList.get(0));
+        // TODO: Wofür Edits? -> Eigentlich nur Moves mit extraSchritten
 
-        System.out.println(paths);
+        System.out.println(findSolution(digits, nMax));
+
+        SevenSegmetFormatter.printNum(Num.D);
+        SevenSegmetFormatter.printNum(Num.E);
     }
 
-    public static List<Edit> generateAllSubPathes(Edit base, Num num) {
-        System.out.println("Searching childs for node " + num.getHexSymbol());
-        List<Edit> paths = new ArrayList<>();
-        for (Move move : num.getAllPossibleMoves()) {
+    public static Solution findSolution(ArrayList<Digit> digits, int maxN) {
+
+        int remainingN = maxN;
+        int currentB = 0;
+
+        Solution optimizedSolution = new Solution(new HashMap<>(), 0, 0, maxN);
+
+        List<Move> allPossibleMoves = new ArrayList<>();
+        for (Digit digit : digits) {
+            allPossibleMoves.addAll(digit.getAllPossibleMoves(maxN));
+        }
+
+        ArrayList<Edit> allEdits = generateAllEdits(new Edit(), allPossibleMoves, 0, maxN);
+        ArrayList<Edit> allValidEdits = new ArrayList<>(allEdits.stream().filter(edit -> edit.isValid(maxN)).toList());
+        allValidEdits.sort(Comparator.comparingDouble(Edit::getTotalDiff));
+
+        System.out.println(allValidEdits);
+
+        return optimizedSolution;
+    }
+
+    public static Move findBestEdit(ArrayList<Move> options) {
+        Move optimalEdit = null;
+        for (Move option : options) {
+            if ((optimalEdit == null || option.getAbsoluteDiff() > optimalEdit.getAbsoluteDiff())) {
+                optimalEdit = option;
+            }
+        }
+        return optimalEdit;
+    }
+
+    public static ArrayList<Edit> generateAllEdits(Edit base, List<Move> moves, int currentB, int remainingN) {
+        ArrayList<Edit> paths = new ArrayList<>();
+        for (Move move : moves) {
+            if (move.getN() > remainingN) continue;
+            if (base.getMovesDone().contains(move)) continue;
             Edit newEdit = base.clone();
+            int newN = remainingN - move.getN();
             newEdit.add(move);
             paths.add(newEdit);
-            paths.addAll(generateAllSubPathes(newEdit, move.getNum2()));
+            paths.addAll(generateAllEdits(newEdit, moves, currentB + move.getB(), newN));
         }
         return paths;
     }
