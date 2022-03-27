@@ -1,11 +1,10 @@
 package de.jab_1305.bwinf21.runde2.aufgabe3;
 
-import de.jab_1305.bwinf21.runde2.aufgabe3.formatting.SevenSegmetFormatter;
+import de.jab_1305.bwinf21.runde2.aufgabe3.model.formatting.SevenSegmetFormatter;
 import de.jab_1305.bwinf21.runde2.aufgabe3.model.*;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Aufgabe3 {
     public static void main(String[] args) {

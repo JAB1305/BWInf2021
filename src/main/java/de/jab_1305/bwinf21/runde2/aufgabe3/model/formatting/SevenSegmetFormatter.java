@@ -1,4 +1,4 @@
-package de.jab_1305.bwinf21.runde2.aufgabe3.formatting;
+package de.jab_1305.bwinf21.runde2.aufgabe3.model.formatting;
 
 import de.jab_1305.bwinf21.runde2.aufgabe3.model.Num;
 
