@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 
-@RequiredArgsConstructor
 public class BTSolution {
     private final LinkedHashMap<BTDigit, BTMove> moves = new LinkedHashMap<>();
     private final ArrayList<BTDigit> digits;
@@ -19,18 +18,29 @@ public class BTSolution {
 
     boolean solutionFound = false;
 
+    public BTSolution(ArrayList<BTDigit> digits) {
+        this.digits = digits;
+        this.nextDigitToAddFrom = digits.get(0);
+        this.nextDigitIndex = 0;
+        this.addNewMove();
+    }
+
     public void addNewMove() {
         BTMove nextMove = null;
 
         if (nextDigitToAddFrom == null || solutionFound) {
             return;
         }
-        if (specialPriority == null) {
-            nextMove = nextDigitToAddFrom.getMoveByHierarchy(1);
+        nextMove = specialPriority == null ?
+                nextDigitToAddFrom.getMoveByHierarchy(1) :
+                nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
+        this.specialPriority = null;
+        this.nextDigitIndex++;
+        this.moves.put(nextDigitToAddFrom, nextMove);
+        if (this.nextDigitIndex < this.digits.size()) {
+            this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
+            addNewMove();
         }
-        nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
-        specialPriority = null;
-        this.moves.put(nextDigitToAddFrom,  nextMove);
     }
 
     public void backTrack() {

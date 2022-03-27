@@ -20,7 +20,8 @@ public class BTDigit {
     }
 
     BTMove getMoveByHierarchy(int rank) {
-        return this.possibleMoves.get(rank - 1);
+        // possibleMove List is sorted, starting with the lowest priority move; ending with the best
+        return this.possibleMoves.get(this.possibleMoves.size() - 1 - (rank - 1));
     }
 
     int getMaxPriority() {

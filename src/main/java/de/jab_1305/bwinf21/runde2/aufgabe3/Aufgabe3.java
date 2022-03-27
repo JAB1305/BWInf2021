@@ -41,7 +41,7 @@ public class Aufgabe3 {
         int remainingN = maxN;
         int currentB = 0;
 
-        Solution optimizedSolution = new Solution(new HashMap<>(), 0, 0, maxN);
+        /*Solution optimizedSolution = new Solution(new HashMap<>(), 0, 0, maxN);
 
         List<Move> allPossibleMoves = new ArrayList<>();
         for (Digit digit : digits) {
@@ -54,7 +54,8 @@ public class Aufgabe3 {
 
         System.out.println(allValidEdits);
 
-        return optimizedSolution;
+        return optimizedSolution;*/
+        return null;
     }
 
     public static Move findBestEdit(ArrayList<Move> options) {

@@ -36,5 +36,4 @@ public class BackTrackAnsatz {
         return true;
     }
 
-    private Move bestMove()
 }
