@@ -33,7 +33,7 @@ public class BTSolution {
             throw new RuntimeException("Smoll PP");
         }
         nextMove = specialPriority == null ?
-                nextDigitToAddFrom.getMoveByHierarchy(1) :
+                nextDigitToAddFrom.getMoveByHierarchy(0) :
                 nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
         this.specialPriority = null;
         this.nextDigitIndex++;
@@ -45,6 +45,8 @@ public class BTSolution {
         System.out.println("Digit: " + nextDigitToAddFrom.num.toString());
 
         if (totalN >= maxN) {
+            // Zuüge verbraucht, Lösung validieren
+            //if (this.totalB != 0) this.backTrack();
             this.backTrack();
         }
 
@@ -63,7 +65,7 @@ public class BTSolution {
         BTMove oldMove = moves.get(moves.size() - 1);
         this.totalN -= oldMove.getN();
 
-        BTDigit digit = digits.get(moves.size() - 1);
+        BTDigit digit = digits.get(this.nextDigitIndex);
 
         if (oldMove.getPriority() < digit.getMaxPriority() && (digit.getMaxPriority() - (oldMove.getPriority() + 1)) > 0) {
             // Change the oldMove to the next move of lower priority, still regarding the same digit
@@ -72,7 +74,7 @@ public class BTSolution {
             System.out.println("specialPriority = " + specialPriority);
         } else if (oldMove.getPriority() + 1 >= digit.getMaxPriority()) {
             // Sets the next Digit to the previous one
-            this.nextDigitIndex --;
+            this.nextDigitIndex -= 2;
             this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
 
             System.out.println(moves.size());

@@ -44,8 +44,8 @@ public enum Num {
         return count;
     }
 
-    public Set<Num> getAllBiggerOnes() {
-        Set<Num> biggerNums = new HashSet<>();
+    public ArrayList<Num> getAllBiggerOnes() {
+        ArrayList<Num> biggerNums = new ArrayList<>();
         for (Num potentialPossibility : Num.values()) {
             if (potentialPossibility.getAbsolute() > this.getAbsolute()) {
                 biggerNums.add(potentialPossibility);

@@ -20,10 +20,11 @@ public class BTDigit {
             possibleMove.setPriority(priority);
             priority--;
         }
+        possibleMoves.forEach(btMove -> System.out.println(btMove.toString()));
         this.num = n;
     }
 
-    BTMove getMoveByHierarchy(int rank) {
+    public BTMove getMoveByHierarchy(int rank) {
         // possibleMove List is sorted, starting with the lowest priority move; ending with the best
         try {
             return this.possibleMoves.get(this.possibleMoves.size() - (rank + 1));
