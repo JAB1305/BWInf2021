@@ -12,19 +12,27 @@ public class BTDigit {
 
     public BTDigit(Num n, int position) {
         this.position = position;
-        // TODO Generate all possible moves, based on the number given as the constructor parameter
         for (Num n2 : n.getAllBiggerOnes()) {
-            this.possibleMoves.add(new BTMove(n, n2));
+            this.possibleMoves.add(new BTMove(n, n2, -1));
+        }
+        int priority = this.possibleMoves.size() - 1;
+        for (BTMove possibleMove : this.possibleMoves) {
+            possibleMove.setPriority(priority);
+            priority--;
         }
         this.num = n;
     }
 
     BTMove getMoveByHierarchy(int rank) {
         // possibleMove List is sorted, starting with the lowest priority move; ending with the best
-        return this.possibleMoves.get(this.possibleMoves.size() - 1 - (rank - 1));
+        try {
+            return this.possibleMoves.get(this.possibleMoves.size() - (rank + 1));
+        } catch (IndexOutOfBoundsException ignored) {
+            throw new IndexOutOfBoundsException("MovePriority out of bounds (" + rank + "/" + this.getMaxPriority() + ")");
+        }
     }
 
     int getMaxPriority() {
-        return -2;
+        return this.possibleMoves.size();
     }
 }

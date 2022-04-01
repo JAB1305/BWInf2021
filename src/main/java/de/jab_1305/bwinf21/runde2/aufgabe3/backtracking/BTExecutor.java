@@ -5,7 +5,6 @@ import de.jab_1305.bwinf21.runde2.aufgabe3.backtracking.objects.BTSolution;
 import de.jab_1305.bwinf21.runde2.aufgabe3.model.Num;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BTExecutor {
 
@@ -20,7 +19,7 @@ public class BTExecutor {
         digits.add(digitMid);
         digits.add(digitRight);
 
-        BTSolution solution = new BTSolution(digits);
+        BTSolution solution = new BTSolution(digits, 3);
         System.out.println(solution);
     }
 }

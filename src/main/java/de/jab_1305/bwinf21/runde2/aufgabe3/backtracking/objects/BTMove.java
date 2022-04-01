@@ -3,6 +3,7 @@ package de.jab_1305.bwinf21.runde2.aufgabe3.backtracking.objects;
 import de.jab_1305.bwinf21.runde2.aufgabe3.model.Num;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -14,14 +15,15 @@ public class BTMove {
     private final Num num2;
 
     private final BTDigit digit;
-    private final int priority;
+    @Setter
+    private int priority;
 
-    public BTMove(Num n1, Num n2) {
+    public BTMove(Num n1, Num n2, int priority) {
         n = 0;
         b = 0;
 
         digit = null;
-        priority = 0;
+        this.priority = priority;
 
         this.num1 = n1;
         this.num2 = n2;
