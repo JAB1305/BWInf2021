@@ -21,10 +21,10 @@ public class Aufgabe3 {
             pos--;
         }
 
-        Move m = new Move(Num.D, Num.E, new Digit(Num.D, 2));
+        Move m = new Move(Num.D, Num.E, new Digit(Num.D, 2));/*
         System.out.println(m);
 
-        System.out.println(digits);
+        System.out.println(digits);*/
 
         // Starting with the first digit, we can now start to calculate our optimal result
 

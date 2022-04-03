@@ -9,17 +9,15 @@ import java.util.ArrayList;
 public class BTExecutor {
 
     public static void main(String[] args) {
-        BTDigit digitLeft = new BTDigit(Num.D, 0);
-        BTDigit digitMid = new BTDigit(Num.TWO, 1);
-        BTDigit digitRight = new BTDigit(Num.FOUR, 2);
-
         ArrayList<BTDigit> digits = new ArrayList<>();
+        ArrayList<Num> nums = Num.valueOfMultipleDigitString("D24");
+        int i = 0;
+        for (Num num : nums) {
+            digits.add(new BTDigit(num, i));
+            i++;
+        }
 
-        digits.add(digitLeft);
-        digits.add(digitMid);
-        digits.add(digitRight);
-
-        BTSolution solution = new BTSolution(digits, 3);
-        System.out.println(solution);
+        BTSolution solution = new BTSolution(digits, 4);
+        System.out.println(solution.compile());
     }
 }

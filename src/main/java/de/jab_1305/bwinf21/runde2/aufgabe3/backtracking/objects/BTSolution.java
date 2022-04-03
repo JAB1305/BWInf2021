@@ -14,6 +14,7 @@ public class BTSolution {
     BTDigit nextDigitToAddFrom;
     Integer specialPriority = null;
 
+    // A valid solution was found on the path, if necessary fall back
     boolean solutionFound = false;
 
     public BTSolution(ArrayList<BTDigit> digits, int maxN) {
@@ -27,29 +28,44 @@ public class BTSolution {
     }
 
     public void addNewMove() throws RuntimeException {
-        BTMove nextMove = null;
+        BTMove nextMove;
 
-        if (nextDigitToAddFrom == null || solutionFound) {
+        if (solutionFound) return;
+
+        if (nextDigitToAddFrom == null) {
             throw new RuntimeException("Smoll PP");
         }
-        nextMove = specialPriority == null ?
-                nextDigitToAddFrom.getMoveByHierarchy(0) :
-                nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
-        this.specialPriority = null;
-        this.nextDigitIndex++;
 
+        // Load either the best or the specialPriority move
+        if (specialPriority == null) {
+            nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
+        } else {
+            nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
+        }
+        this.specialPriority = null;
+
+        // Add new move, recalculate total B and N
         this.moves.add(nextMove);
         this.totalB += nextMove.getB();
         this.totalN += nextMove.getN();
 
-        System.out.println("Digit: " + nextDigitToAddFrom.num.toString());
-
-        if (totalN >= maxN) {
-            // Zuüge verbraucht, Lösung validieren
-            //if (this.totalB != 0) this.backTrack();
+        // Check if either too much N or maxN but invalid
+        // Bot cases -> BackTrack (reverse previous move)
+        if (totalN > maxN || (this.totalN == maxN && this.totalB != 0)) {
             this.backTrack();
+            return;
         }
 
+        // Proceed with digit
+        this.nextDigitIndex++;
+
+        // Check if a solution was found, N doesn't matter as it was
+        // checked to be less than maxN previously and is allowed to be less than maxN
+        if (this.totalB == 0 && this.totalN == this.maxN) {
+            this.solutionFound = true;
+        }
+
+        // As long as moves can be added, add a new move
         if (this.nextDigitIndex < this.digits.size()) {
             this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
             addNewMove();
@@ -62,35 +78,56 @@ public class BTSolution {
 
         // Get the last added move
 
+
         BTMove oldMove = moves.get(moves.size() - 1);
         this.totalN -= oldMove.getN();
+        this.totalB -= oldMove.getB();
 
+
+        // As the index is not increased already, this is the CURRENT digit
+        // That the "oldMove" is referring to
         BTDigit digit = digits.get(this.nextDigitIndex);
+
+        System.out.println("Supposed to rollback digit " + this.nextDigitIndex + " current prio: " + oldMove.getPriority());
 
         if (oldMove.getPriority() < digit.getMaxPriority() && (digit.getMaxPriority() - (oldMove.getPriority() + 1)) > 0) {
             // Change the oldMove to the next move of lower priority, still regarding the same digit
             this.specialPriority = oldMove.getPriority() + 1;
-            this.nextDigitIndex--;
-            System.out.println("specialPriority = " + specialPriority);
         } else if (oldMove.getPriority() + 1 >= digit.getMaxPriority()) {
-            // Sets the next Digit to the previous one
-            this.nextDigitIndex -= 2;
-            this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
+            // Rollback to a point where the move can pe changed
 
-            System.out.println(moves.size());
+            // Sets the next Digit to the previous one
+            this.nextDigitIndex --;
+            this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
 
             // Get the second last added move
             BTMove secondLastMove = moves.get(moves.size() - 2);
             this.totalN -= secondLastMove.getN();
+            this.totalB -= secondLastMove.getB();
             // Sets the specialPriority to a higher one, as the previously used did end up in a stuck situation
             this.specialPriority = secondLastMove.getPriority() + 1;
             this.moves.remove(secondLastMove);
 
-            System.out.println("Switched digit  from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
+            System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
+
+            // FIXME: If F24 with D24 being the starting num is rollbacked, the
+            //  code will try to add priority to the second digit, leading to MovePriorityOutOfBounds
         } else {
             throw new RuntimeException("New move could not be determined");
         }
         this.moves.remove(oldMove);
         this.addNewMove();
+    }
+
+    public String compile() {
+        StringBuilder num = new StringBuilder();
+        for (int i = 0; i < this.digits.size(); i++) {
+            if (i < this.moves.size()) {
+                num.append(this.moves.get(i).getNum2().getHexSymbol());
+                continue;
+            }
+            num.append(this.digits.get(i).num.getHexSymbol());
+        }
+        return num.toString();
     }
 }
