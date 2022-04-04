@@ -17,7 +17,7 @@ public class BTExecutor {
             i++;
         }
 
-        BTSolution solution = new BTSolution(digits, 3);
+        BTSolution solution = new BTSolution(digits, 6);
         System.out.println(solution.compile());
     }
 }

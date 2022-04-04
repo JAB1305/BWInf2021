@@ -3,6 +3,20 @@ package de.jab_1305.bwinf21.runde2.aufgabe3.backtracking.objects;
 import java.util.*;
 
 public class BTSolution {
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
+    // TODO AND FIXME: Solutions that were already found but need to be checked if they are the maximum possible
+
+    // FIXME: D24 -> FFF is considered a valid solution although totalB = 2 (0) and totalN is only 5 (6)
+
     private final ArrayList<BTDigit> digits;
     private final ArrayList<BTMove> moves;
 
@@ -46,8 +60,7 @@ public class BTSolution {
 
         // Add new move, recalculate total B and N
         this.moves.add(nextMove);
-        this.totalB += nextMove.getB();
-        this.totalN += nextMove.getN();
+        recalculate();
 
         // Check if either too much N or maxN but invalid
         // Bot cases -> BackTrack (reverse previous move)
@@ -86,7 +99,7 @@ public class BTSolution {
         // That the "oldMove" is referring to
         BTDigit digit = digits.get(this.nextDigitIndex);
 
-        System.out.println("Supposed to rollback digit " + this.nextDigitIndex + " current prio: " + oldMove.getPriority());
+        //System.out.println("Supposed to rollback digit " + this.nextDigitIndex + " current prio: " + oldMove.getPriority());
 
         if (oldMove.getPriority() < digit.getMaxPriority() && (digit.getMaxPriority() - (oldMove.getPriority() + 1)) > 0) {
             // Change the oldMove to the next move of lower priority, still regarding the same digit
@@ -117,9 +130,6 @@ public class BTSolution {
                     recalculate();
                 }
             }
-
-            // FIXME: If F24 with D24 being the starting num is rollbacked, the
-            //  code will try to add priority to the second digit, leading to MovePriorityOutOfBounds
         } else {
             throw new RuntimeException("New move could not be determined");
         }
@@ -128,6 +138,8 @@ public class BTSolution {
     }
 
     public String compile() {
+        String message = ANSI_BLUE;
+
         StringBuilder num = new StringBuilder();
         for (int i = 0; i < this.digits.size(); i++) {
             if (i < this.moves.size()) {
@@ -136,7 +148,16 @@ public class BTSolution {
             }
             num.append(this.digits.get(i).num.getHexSymbol());
         }
-        return num.toString();
+        message += num + "\n" + ANSI_YELLOW;
+
+        StringBuilder moveInstructions = new StringBuilder("Züge: \n");
+        for (BTMove move : this.moves) {
+            moveInstructions.append(move.getNum1().getHexSymbol()).append(" ➔ ").append(move.getNum2().getHexSymbol()).append("\n");
+        }
+
+        message += moveInstructions;
+
+        return message;
     }
 
     private void recalculate() {
