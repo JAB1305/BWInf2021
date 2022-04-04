@@ -80,8 +80,6 @@ public class BTSolution {
 
 
         BTMove oldMove = moves.get(moves.size() - 1);
-        this.totalN -= oldMove.getN();
-        this.totalB -= oldMove.getB();
 
 
         // As the index is not increased already, this is the CURRENT digit
@@ -96,19 +94,29 @@ public class BTSolution {
         } else if (oldMove.getPriority() + 1 >= digit.getMaxPriority()) {
             // Rollback to a point where the move can pe changed
 
-            // Sets the next Digit to the previous one
-            this.nextDigitIndex --;
-            this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
+            for (int indexToCheck = this.nextDigitIndex; indexToCheck >= 0; indexToCheck--) {
+                boolean isEditable = (this.digits.get(indexToCheck).getMaxPriority()
+                        != this.moves.get(indexToCheck).getPriority() + 1);
+                if (isEditable) {
+                    // Sets the next Digit to the previous one
+                    this.nextDigitIndex--;
+                    this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
 
-            // Get the second last added move
-            BTMove secondLastMove = moves.get(moves.size() - 2);
-            this.totalN -= secondLastMove.getN();
-            this.totalB -= secondLastMove.getB();
-            // Sets the specialPriority to a higher one, as the previously used did end up in a stuck situation
-            this.specialPriority = secondLastMove.getPriority() + 1;
-            this.moves.remove(secondLastMove);
+                    // Get the second last added move
+                    BTMove moveToEdit = moves.get(indexToCheck);
+                    // Sets the specialPriority to a higher one, as the previously used did end up in a stuck situation
+                    this.specialPriority = moveToEdit.getPriority() + 1;
+                    this.moves.remove(moveToEdit);
+                    recalculate();
 
-            System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
+                    System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
+                    break;
+                } else {
+                    BTMove moveToEdit = moves.get(indexToCheck);
+                    this.moves.remove(moveToEdit);
+                    recalculate();
+                }
+            }
 
             // FIXME: If F24 with D24 being the starting num is rollbacked, the
             //  code will try to add priority to the second digit, leading to MovePriorityOutOfBounds
@@ -129,5 +137,15 @@ public class BTSolution {
             num.append(this.digits.get(i).num.getHexSymbol());
         }
         return num.toString();
+    }
+
+    private void recalculate() {
+        this.totalN = 0;
+        this.totalB = 0;
+
+        for (BTMove move : this.moves) {
+            this.totalN += move.getN();
+            this.totalB += move.getB();
+        }
     }
 }
