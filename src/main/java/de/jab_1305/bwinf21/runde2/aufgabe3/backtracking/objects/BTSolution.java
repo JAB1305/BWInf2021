@@ -31,6 +31,8 @@ public class BTSolution {
     // A valid solution was found on the path, if necessary fall back
     boolean solutionFound = false;
 
+    BTBasicSolution nearestValidSolution = null;
+
     public BTSolution(ArrayList<BTDigit> digits, int maxN) {
         this.digits = digits;
         this.moves = new ArrayList<>();
@@ -62,9 +64,13 @@ public class BTSolution {
         this.moves.add(nextMove);
         recalculate();
 
+
         // Check if either too much N or maxN but invalid
         // Bot cases -> BackTrack (reverse previous move)
         if (totalN > maxN || (this.totalN == maxN && this.totalB != 0)) {
+            if (this.nearestValidSolution != null) {
+                System.out.println("Nearest solution was used");
+            }
             this.backTrack();
             return;
         }
@@ -76,6 +82,12 @@ public class BTSolution {
         // checked to be less than maxN previously and is allowed to be less than maxN
         if (this.totalB == 0 && this.totalN == this.maxN) {
             this.solutionFound = true;
+        }
+        recalculate();
+
+        if (this.totalB == 0) {
+            recalculate();
+            this.nearestValidSolution = new BTBasicSolution(this.moves, this.digits, this.totalN, this.totalB);
         }
 
         // As long as moves can be added, add a new move
@@ -134,10 +146,18 @@ public class BTSolution {
             throw new RuntimeException("New move could not be determined");
         }
         this.moves.remove(oldMove);
+        recalculate();
         this.addNewMove();
     }
 
     public String compile() {
+
+
+        if (!solutionFound) {
+            if (this.nearestValidSolution != null) return nearestValidSolution.compile();
+            return ANSI_RED + "No solution was found. FIXME: There might be a solution not using every move";
+        }
+
         String message = ANSI_BLUE;
 
         StringBuilder num = new StringBuilder();
@@ -152,10 +172,22 @@ public class BTSolution {
 
         StringBuilder moveInstructions = new StringBuilder("Züge: \n");
         for (BTMove move : this.moves) {
-            moveInstructions.append(move.getNum1().getHexSymbol()).append(" ➔ ").append(move.getNum2().getHexSymbol()).append("\n");
+            moveInstructions.append("\n");
+            moveInstructions.append(move.getNum1().getHexSymbol());
+            moveInstructions.append(" ➔ ");
+            moveInstructions.append(move.getNum2().getHexSymbol());
+            moveInstructions.append(" N: ");
+            moveInstructions.append(move.getN());
+            moveInstructions.append(" B: ");
+            moveInstructions.append(move.getB());
         }
 
         message += moveInstructions;
+
+        recalculate();
+        System.out.println("\n");
+        System.out.println("totalN = " + totalN);
+        System.out.println("totalB = " + totalB);
 
         return message;
     }
