@@ -1,5 +1,7 @@
 package de.jab_1305.bwinf21.runde2.aufgabe3.backtracking.objects;
 
+import de.jab_1305.bwinf21.runde2.aufgabe3.model.Num;
+
 import java.util.*;
 
 public class BTSolution {
@@ -13,16 +15,14 @@ public class BTSolution {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    // TODO AND FIXME: Solutions that were already found but need to be checked if they are the maximum possible
-
-    // FIXME: D24 -> FFF is considered a valid solution although totalB = 2 (0) and totalN is only 5 (6)
-
     private final ArrayList<BTDigit> digits;
     private final ArrayList<BTMove> moves;
 
     private final int maxN;
     int totalN;
     int totalB;
+
+    // FIXME: Numbers starting with F cause MP out of bounds
 
     int nextDigitIndex;
     BTDigit nextDigitToAddFrom;
@@ -44,7 +44,8 @@ public class BTSolution {
     }
 
     public void addNewMove() throws RuntimeException {
-        BTMove nextMove;
+        BTMove nextMove = null;
+        this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
 
         if (solutionFound) return;
 
@@ -53,9 +54,19 @@ public class BTSolution {
         }
 
         // Load either the best or the specialPriority move
+        // FIXME: Search for a valid digit, the index might lead to a digit already at F
         if (specialPriority == null) {
+            while (nextMove == null) {
+                if (this.nextDigitToAddFrom.num != Num.F) {
+                    nextMove = this.nextDigitToAddFrom.getMoveByHierarchy(0);
+                    continue;
+                }
+                this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
+                this.nextDigitIndex++;
+            }
             nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
         } else {
+            // Atm it is assumed that the specialPriority is valid on the next digit
             nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
         }
         this.specialPriority = null;
@@ -67,7 +78,7 @@ public class BTSolution {
 
         // Check if either too much N or maxN but invalid
         // Bot cases -> BackTrack (reverse previous move)
-        if (totalN > maxN || (this.totalN == maxN && this.totalB != 0)) {
+        if (totalN > maxN || (this.totalN == maxN && this.totalB != 0) || (this.moves.size() == this.digits.size() && this.totalB != 0)) {
             if (this.nearestValidSolution != null) {
                 System.out.println("Nearest solution was used");
             }
@@ -88,11 +99,11 @@ public class BTSolution {
         if (this.totalB == 0) {
             recalculate();
             this.nearestValidSolution = new BTBasicSolution(this.moves, this.digits, this.totalN, this.totalB);
+            System.out.println("Nearest solution found");
         }
 
         // As long as moves can be added, add a new move
         if (this.nextDigitIndex < this.digits.size()) {
-            this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
             addNewMove();
         }
     }
@@ -102,10 +113,7 @@ public class BTSolution {
         // If there is no move with the next priority lvl, update the move of the previous digit
 
         // Get the last added move
-
-
         BTMove oldMove = moves.get(moves.size() - 1);
-
 
         // As the index is not increased already, this is the CURRENT digit
         // That the "oldMove" is referring to
@@ -120,8 +128,10 @@ public class BTSolution {
             // Rollback to a point where the move can pe changed
 
             for (int indexToCheck = this.nextDigitIndex; indexToCheck >= 0; indexToCheck--) {
-                boolean isEditable = (this.digits.get(indexToCheck).getMaxPriority()
+                boolean isEditable =
+                        (this.digits.get(indexToCheck).getMaxPriority()
                         != this.moves.get(indexToCheck).getPriority() + 1);
+                // FIXME Looks like isEditable throws an exception when it should be false, inspect further
                 if (isEditable) {
                     // Sets the next Digit to the previous one
                     this.nextDigitIndex--;
@@ -176,9 +186,9 @@ public class BTSolution {
             moveInstructions.append(move.getNum1().getHexSymbol());
             moveInstructions.append(" ➔ ");
             moveInstructions.append(move.getNum2().getHexSymbol());
-            moveInstructions.append(" N: ");
+            moveInstructions.append(" | N ");
             moveInstructions.append(move.getN());
-            moveInstructions.append(" B: ");
+            moveInstructions.append(" B ");
             moveInstructions.append(move.getB());
         }
 
