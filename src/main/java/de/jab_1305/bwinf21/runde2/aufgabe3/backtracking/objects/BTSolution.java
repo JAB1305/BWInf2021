@@ -61,8 +61,11 @@ public class BTSolution {
                     nextMove = this.nextDigitToAddFrom.getMoveByHierarchy(0);
                     continue;
                 }
-                this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
                 this.nextDigitIndex++;
+                if (this.nextDigitIndex == this.digits.size()) {
+                    return;
+                }
+                this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
             }
             nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
         } else {
@@ -128,10 +131,10 @@ public class BTSolution {
             // Rollback to a point where the move can pe changed
 
             for (int indexToCheck = this.nextDigitIndex; indexToCheck >= 0; indexToCheck--) {
-                boolean isEditable =
-                        (this.digits.get(indexToCheck).getMaxPriority()
+                boolean isEditable = (this.digits.get(indexToCheck).getMaxPriority()
                         != this.moves.get(indexToCheck).getPriority() + 1);
                 // FIXME Looks like isEditable throws an exception when it should be false, inspect further
+                // FIXME More details: digits.indexToCheck is valid, moves.indexToCheck is outOfBounds
                 if (isEditable) {
                     // Sets the next Digit to the previous one
                     this.nextDigitIndex--;
@@ -165,7 +168,7 @@ public class BTSolution {
 
         if (!solutionFound) {
             if (this.nearestValidSolution != null) return nearestValidSolution.compile();
-            return ANSI_RED + "No solution was found. FIXME: There might be a solution not using every move";
+            return ANSI_RED + "No solution was found. The number might already consist of only Fs";
         }
 
         String message = ANSI_BLUE;
