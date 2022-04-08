@@ -22,8 +22,6 @@ public class BTSolution {
     int totalN;
     int totalB;
 
-    // FIXME: Numbers starting with F cause MP out of bounds
-
     int nextDigitIndex;
     BTDigit nextDigitToAddFrom;
     Integer specialPriority = null;
@@ -54,15 +52,17 @@ public class BTSolution {
         }
 
         // Load either the best or the specialPriority move
-        // FIXME: Search for a valid digit, the index might lead to a digit already at F
         if (specialPriority == null) {
             while (nextMove == null) {
                 if (this.nextDigitToAddFrom.num != Num.F) {
                     nextMove = this.nextDigitToAddFrom.getMoveByHierarchy(0);
                     continue;
+                } else {
+                    this.moves.add(this.nextDigitToAddFrom.getNeutralMove());
                 }
                 this.nextDigitIndex++;
                 if (this.nextDigitIndex == this.digits.size()) {
+                    System.out.println("Recursion should be canceled early");
                     return;
                 }
                 this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);

@@ -10,7 +10,7 @@ public class BTExecutor {
 
     public static void main(String[] args) {
         ArrayList<BTDigit> digits = new ArrayList<>();
-        ArrayList<Num> nums = Num.valueOfMultipleDigitString("F15");
+        ArrayList<Num> nums = Num.valueOfMultipleDigitString("E4");
         // FIXME: Key is postponed between digit and moves as F15 with Moves (1 -> 7 AND 5 -> F) turns out as
         //  75F instead of F7F
 
