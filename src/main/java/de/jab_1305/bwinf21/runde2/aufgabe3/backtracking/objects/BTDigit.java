@@ -33,6 +33,10 @@ public class BTDigit {
         }
     }
 
+    public BTMove getNeutralMove() {
+        return new BTMove(this.num, this.num, -1);
+    }
+
     int getMaxPriority() {
         return this.possibleMoves.size();
     }
