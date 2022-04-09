@@ -4,16 +4,7 @@ import de.jab_1305.bwinf21.runde2.aufgabe3.model.Num;
 
 import java.util.*;
 
-public class BTSolution {
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+public class BTSolution implements Solution {
 
     private final ArrayList<BTDigit> digits;
     private final ArrayList<BTMove> moves;
@@ -53,21 +44,27 @@ public class BTSolution {
 
         // Load either the best or the specialPriority move
         if (specialPriority == null) {
+            // Search for the next valid move, D ->
             while (nextMove == null) {
+                // Checked if digit is maxed out
                 if (this.nextDigitToAddFrom.num != Num.F) {
                     nextMove = this.nextDigitToAddFrom.getMoveByHierarchy(0);
                     continue;
                 } else {
+                    // As the digit is already maxed out, skip it and add the neutral move as a "placeholder"
                     this.moves.add(this.nextDigitToAddFrom.getNeutralMove());
                 }
                 this.nextDigitIndex++;
+
+                // Check if iterated over every digit
                 if (this.nextDigitIndex == this.digits.size()) {
                     System.out.println("Recursion should be canceled early");
-                    return;
+                    this.nextDigitIndex--;
+                    this.backTrack();
+                    break;
                 }
                 this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
             }
-            nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
         } else {
             // Atm it is assumed that the specialPriority is valid on the next digit
             if (nextDigitToAddFrom.getMaxPriority() >= specialPriority)
@@ -78,9 +75,14 @@ public class BTSolution {
         this.specialPriority = null;
 
         // Add new move, recalculate total B and N
+        if (nextMove != null)
         this.moves.add(nextMove);
         recalculate();
 
+
+        if (this.totalB == 0) {
+            this.nearestValidSolution = new BTBasicSolution(new ArrayList<>(this.moves), new ArrayList<>(this.digits), this.totalN, this.totalB);
+        }
 
         // Check if either too much N or maxN but invalid
         // Bot cases -> BackTrack (reverse previous move)
@@ -88,6 +90,7 @@ public class BTSolution {
             if (this.nearestValidSolution != null) {
                 System.out.println("Nearest solution was used");
             }
+            this.simpleSolCompile();
             this.backTrack();
             return;
         }
@@ -101,12 +104,6 @@ public class BTSolution {
             this.solutionFound = true;
         }
         recalculate();
-
-        if (this.totalB == 0) {
-            recalculate();
-            this.nearestValidSolution = new BTBasicSolution(this.moves, this.digits, this.totalN, this.totalB);
-            System.out.println("Nearest solution found");
-        }
 
         // As long as moves can be added, add a new move
         if (this.nextDigitIndex < this.digits.size()) {
@@ -168,15 +165,34 @@ public class BTSolution {
         this.addNewMove();
     }
 
+    @Override
+    public void simpleSolCompile() {
+        StringBuilder num = new StringBuilder();
+        for (int i = 0; i < this.digits.size(); i++) {
+            if (i < this.moves.size()) {
+                num.append(this.moves.get(i).getNum2().getHexSymbol());
+                continue;
+            }
+            num.append(this.digits.get(i).num.getHexSymbol());
+        }
+        System.out.println(num.toString());
+    }
+
+    @Override
     public String compile() {
 
+        System.out.println("DebugInformation:" +
+                "\n    Moves done:" + this.moves.size() +
+                "\n    Total N:" + this.totalN +
+                "\n    Total B:" + this.totalB +
+                ("\n    NearestSolution == null: " + String.valueOf(this.nearestValidSolution == null)));
 
         if (!solutionFound) {
-            if (this.nearestValidSolution != null) return nearestValidSolution.compile();
-            return ANSI_RED + "No solution was found. The number might already consist of only Fs";
+            if (this.nearestValidSolution != null) System.out.println(nearestValidSolution.compile());
+            System.out.println(ANSI_RED + "No solution was found. The number might already consist of only Fs");
         }
 
-        String message = ANSI_BLUE;
+        String message = solutionFound ? ANSI_BLUE : ANSI_PURPLE;
 
         StringBuilder num = new StringBuilder();
         for (int i = 0; i < this.digits.size(); i++) {
@@ -220,3 +236,23 @@ public class BTSolution {
         }
     }
 }
+
+/*
+EYYY
+
+
+totalN = 13
+totalB = 0
+FFFF7D6B55
+Züge:
+
+5 ➔ F N: 1 B: 1
+0 ➔ F N: 1 B: 2
+9 ➔ F N: 1 B: 2
+C ➔ F N: 1 B: 0
+3 ➔ 7 N: 0 B: 2
+1 ➔ D N: 3 B: -3
+1 ➔ 6 N: 6 B: -4
+
+1+2+2+2-3-4
+ */
