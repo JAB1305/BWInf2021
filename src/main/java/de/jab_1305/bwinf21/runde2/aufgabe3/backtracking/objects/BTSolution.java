@@ -30,6 +30,8 @@ public class BTSolution implements Solution {
         this.nextDigitIndex = 0;
         // Start recursion
         this.addNewMove();
+        FeedbackGen feedbackGen = new FeedbackGen(this, this.nearestValidSolution);
+        feedbackGen.printDetails(FeedbackGen.YELLOW);
     }
 
     public void addNewMove() throws RuntimeException {
@@ -39,7 +41,7 @@ public class BTSolution implements Solution {
         if (solutionFound) return;
 
         if (nextDigitToAddFrom == null) {
-            throw new RuntimeException("Smoll PP");
+            throw new RuntimeException("Next digit null");
         }
 
         // Load either the best or the specialPriority move
@@ -81,7 +83,7 @@ public class BTSolution implements Solution {
 
 
         if (this.totalB == 0) {
-            this.nearestValidSolution = new BTBasicSolution(new ArrayList<>(this.moves), new ArrayList<>(this.digits), this.totalN, this.totalB);
+            this.nearestValidSolution = new BTBasicSolution(new ArrayList<>(this.moves), new ArrayList<>(this.digits));
         }
 
         // Check if either too much N or maxN but invalid
@@ -90,7 +92,8 @@ public class BTSolution implements Solution {
             if (this.nearestValidSolution != null) {
                 System.out.println("Nearest solution was used");
             }
-            this.simpleSolCompile();
+            FeedbackGen feedbackGen = new FeedbackGen(this, this.nearestValidSolution);
+            feedbackGen.printSummary(FeedbackGen.PURPLE);
             this.backTrack();
             return;
         }
@@ -135,8 +138,6 @@ public class BTSolution implements Solution {
 
                 boolean isEditable = isSet && (this.digits.get(indexToCheck).getMaxPriority()
                         != this.moves.get(indexToCheck).getPriority() + 1);
-                // FIXME Looks like isEditable throws an exception when it should be false, inspect further
-                // FIXME More details: digits.indexToCheck is valid, moves.indexToCheck is outOfBounds
                 if (isEditable) {
                     // Sets the next Digit to the previous one
                     this.nextDigitIndex--;
@@ -165,67 +166,6 @@ public class BTSolution implements Solution {
         this.addNewMove();
     }
 
-    @Override
-    public void simpleSolCompile() {
-        StringBuilder num = new StringBuilder();
-        for (int i = 0; i < this.digits.size(); i++) {
-            if (i < this.moves.size()) {
-                num.append(this.moves.get(i).getNum2().getHexSymbol());
-                continue;
-            }
-            num.append(this.digits.get(i).num.getHexSymbol());
-        }
-        System.out.println(num.toString());
-    }
-
-    @Override
-    public String compile() {
-
-        System.out.println("DebugInformation:" +
-                "\n    Moves done:" + this.moves.size() +
-                "\n    Total N:" + this.totalN +
-                "\n    Total B:" + this.totalB +
-                ("\n    NearestSolution == null: " + String.valueOf(this.nearestValidSolution == null)));
-
-        if (!solutionFound) {
-            if (this.nearestValidSolution != null) System.out.println(nearestValidSolution.compile());
-            System.out.println(ANSI_RED + "No solution was found. The number might already consist of only Fs");
-        }
-
-        String message = solutionFound ? ANSI_BLUE : ANSI_PURPLE;
-
-        StringBuilder num = new StringBuilder();
-        for (int i = 0; i < this.digits.size(); i++) {
-            if (i < this.moves.size()) {
-                num.append(this.moves.get(i).getNum2().getHexSymbol());
-                continue;
-            }
-            num.append(this.digits.get(i).num.getHexSymbol());
-        }
-        message += num + "\n" + ANSI_YELLOW;
-
-        StringBuilder moveInstructions = new StringBuilder("Züge: \n");
-        for (BTMove move : this.moves) {
-            moveInstructions.append("\n");
-            moveInstructions.append(move.getNum1().getHexSymbol());
-            moveInstructions.append(" ➔ ");
-            moveInstructions.append(move.getNum2().getHexSymbol());
-            moveInstructions.append(" | N ");
-            moveInstructions.append(move.getN());
-            moveInstructions.append(" B ");
-            moveInstructions.append(move.getB());
-        }
-
-        message += moveInstructions;
-
-        recalculate();
-        System.out.println("\n");
-        System.out.println("totalN = " + totalN);
-        System.out.println("totalB = " + totalB);
-
-        return message;
-    }
-
     private void recalculate() {
         this.totalN = 0;
         this.totalB = 0;
@@ -234,6 +174,16 @@ public class BTSolution implements Solution {
             this.totalN += move.getN();
             this.totalB += move.getB();
         }
+    }
+
+    @Override
+    public List<BTDigit> getDigits() {
+        return this.digits;
+    }
+
+    @Override
+    public List<BTMove> getMoves() {
+        return this.moves;
     }
 }
 
