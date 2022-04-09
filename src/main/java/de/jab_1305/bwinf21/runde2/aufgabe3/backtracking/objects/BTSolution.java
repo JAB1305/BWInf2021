@@ -70,7 +70,10 @@ public class BTSolution {
             nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
         } else {
             // Atm it is assumed that the specialPriority is valid on the next digit
-            nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
+            if (nextDigitToAddFrom.getMaxPriority() >= specialPriority)
+                nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
+            else
+                nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
         }
         this.specialPriority = null;
 
@@ -131,7 +134,9 @@ public class BTSolution {
             // Rollback to a point where the move can pe changed
 
             for (int indexToCheck = this.nextDigitIndex; indexToCheck >= 0; indexToCheck--) {
-                boolean isEditable = (this.digits.get(indexToCheck).getMaxPriority()
+                boolean isSet = indexToCheck < this.moves.size();
+
+                boolean isEditable = isSet && (this.digits.get(indexToCheck).getMaxPriority()
                         != this.moves.get(indexToCheck).getPriority() + 1);
                 // FIXME Looks like isEditable throws an exception when it should be false, inspect further
                 // FIXME More details: digits.indexToCheck is valid, moves.indexToCheck is outOfBounds
@@ -149,7 +154,7 @@ public class BTSolution {
 
                     System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
                     break;
-                } else {
+                } else if (isSet) {
                     BTMove moveToEdit = moves.get(indexToCheck);
                     this.moves.remove(moveToEdit);
                     recalculate();
