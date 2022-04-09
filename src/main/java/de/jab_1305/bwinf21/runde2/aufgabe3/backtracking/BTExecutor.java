@@ -10,7 +10,7 @@ public class BTExecutor {
 
     public static void main(String[] args) {
         ArrayList<BTDigit> digits = new ArrayList<>();
-        ArrayList<Num> nums = Num.valueOfMultipleDigitString("509C431B55");
+        ArrayList<Num> nums = Num.valueOfMultipleDigitString("632B29B38F11849015A3BCAEE2CDA0BD496919F8");
 
         int i = 0;
         for (Num num : nums) {
@@ -18,6 +18,6 @@ public class BTExecutor {
             i++;
         }
 
-        BTSolution solution = new BTSolution(digits, 8);
+        BTSolution solution = new BTSolution(digits, 37);
     }
 }

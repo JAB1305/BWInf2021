@@ -69,7 +69,9 @@ public class BTSolution implements Solution {
             }
         } else {
             // Atm it is assumed that the specialPriority is valid on the next digit
-            if (nextDigitToAddFrom.getMaxPriority() >= specialPriority)
+            // FIXME: Assumption: Digit is shifted while specialPriority adjusted on a certain digit remains the same
+            // Resulting in stackOverflow as the digitIndex isn't shifting??? DEBUG
+            if (nextDigitToAddFrom.getMaxPriority() > specialPriority)
                 nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
             else
                 nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
