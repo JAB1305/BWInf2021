@@ -73,8 +73,11 @@ public class BTSolution implements Solution {
             // Resulting in stackOverflow as the digitIndex isn't shifting??? DEBUG
             if (nextDigitToAddFrom.getMaxPriority() > specialPriority)
                 nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
-            else
-                nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
+            else {
+                throw new RuntimeException("Invalid specialPriority");
+                /*nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
+                this.nextDigitIndex++;*/
+            }
         }
         this.specialPriority = null;
 
@@ -153,6 +156,7 @@ public class BTSolution implements Solution {
                     recalculate();
 
                     System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
+                    this.specialPriority = null;
                     break;
                 } else if (isSet) {
                     BTMove moveToEdit = moves.get(indexToCheck);
