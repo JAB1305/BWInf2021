@@ -6,12 +6,10 @@ import java.util.Arrays;
 
 public class Card {
     private String binary;
-    private int oneCount;
     @Getter
     private boolean[] boolArray;
 
     public Card(String binary, int length) {
-        this.oneCount = 0;
         this.binary = binary;
         int pos = 0;
         boolArray = new boolean[length];
@@ -22,7 +20,6 @@ public class Card {
                 throw new ArrayIndexOutOfBoundsException("Invalid card length");
             }
             if (c == '1') {
-                this.oneCount++;
                 boolArray[pos] = true;
             }
             pos++;
