@@ -74,7 +74,7 @@ public class BTSolution implements Solution {
             if (nextDigitToAddFrom.getMaxPriority() > specialPriority)
                 nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
             else {
-                throw new RuntimeException("Invalid specialPriority");
+                throw new RuntimeException("Invalid specialPriority for digit " + nextDigitIndex + " prio " + specialPriority);
                 /*nextMove = nextDigitToAddFrom.getMoveByHierarchy(0);
                 this.nextDigitIndex++;*/
             }
@@ -82,8 +82,9 @@ public class BTSolution implements Solution {
         this.specialPriority = null;
 
         // Add new move, recalculate total B and N
-        if (nextMove != null)
-        this.moves.add(nextMove);
+        if (nextMove != null) {
+            this.moves.add(nextMove);
+        }
         recalculate();
 
 
@@ -135,14 +136,17 @@ public class BTSolution implements Solution {
         if (oldMove.getPriority() < digit.getMaxPriority() && (digit.getMaxPriority() - (oldMove.getPriority() + 1)) > 0) {
             // Change the oldMove to the next move of lower priority, still regarding the same digit
             this.specialPriority = oldMove.getPriority() + 1;
+            System.out.println("Special prio set to " + this.specialPriority + " for digit " + this.nextDigitIndex);
         } else if (oldMove.getPriority() + 1 >= digit.getMaxPriority()) {
             // Rollback to a point where the move can pe changed
 
             for (int indexToCheck = this.nextDigitIndex; indexToCheck >= 0; indexToCheck--) {
                 boolean isSet = indexToCheck < this.moves.size();
 
-                boolean isEditable = isSet && (this.digits.get(indexToCheck).getMaxPriority()
-                        != this.moves.get(indexToCheck).getPriority() + 1);
+                boolean isEditable = isSet
+                        && (this.moves.get(indexToCheck).getPriority() + 1
+                        < this.digits.get(indexToCheck - 1).getMaxPriority());
+
                 if (isEditable) {
                     // Sets the next Digit to the previous one
                     this.nextDigitIndex--;
@@ -152,11 +156,9 @@ public class BTSolution implements Solution {
                     BTMove moveToEdit = moves.get(indexToCheck);
                     // Sets the specialPriority to a higher one, as the previously used did end up in a stuck situation
                     this.specialPriority = moveToEdit.getPriority() + 1;
+                    System.out.println("[2] Special prio set to " + this.specialPriority + " for digit " + this.nextDigitIndex);
                     this.moves.remove(moveToEdit);
                     recalculate();
-
-                    System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
-                    this.specialPriority = null;
                     break;
                 } else if (isSet) {
                     BTMove moveToEdit = moves.get(indexToCheck);

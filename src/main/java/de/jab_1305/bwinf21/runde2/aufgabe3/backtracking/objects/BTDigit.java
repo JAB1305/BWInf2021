@@ -38,6 +38,7 @@ public class BTDigit {
     }
 
     int getMaxPriority() {
+        // 9 elements, max prio is 9, method returns 9
         return this.possibleMoves.size();
     }
 }
