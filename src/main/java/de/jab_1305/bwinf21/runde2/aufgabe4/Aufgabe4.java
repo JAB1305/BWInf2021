@@ -23,7 +23,7 @@ public class Aufgabe4 {
         ArrayList<Card> cards = loadFromFile("src/main/java/de/jab_1305/bwinf21/runde2/aufgabe4/examples/stapel0.txt");
         ArrayList<Card> lessCards = new ArrayList<>(Arrays.asList(xor, card, card2, card3, card4));
 
-        CardStack lowScaleTest = new CardStack(cards, 32, 4);
+        CardStack lowScaleTest = new CardStack(lessCards, 8, 4);
         lowScaleTest.findXOR();
     }
 

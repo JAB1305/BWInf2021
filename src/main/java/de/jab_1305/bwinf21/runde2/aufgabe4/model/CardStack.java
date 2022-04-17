@@ -96,13 +96,7 @@ public class CardStack {
         // FIXME: Es fehlt die Lösung???
         for (Card potXOR : cards) {
             boolean[] boolArray = potXOR.getBoolArray();
-            // Checking if 'card' might be the XOR
-            // Using declared conditions check possibilities for digit
-            // e.g. First digit is a 1; A 1 can be formed by an OC of 2,4,6,8 but max is 3
-            // -> 2 ones on the first digit
             List<DigitInfo> dInfos = this.generateDigitInformation(boolArray);
-            // Generate all Subsets (4 in 5) and validate with the given DInformation
-
 
             LinkedList<LinkedList<Integer>> allPermutations = combination(this.cards.size(), this.targetCardCount);
             System.out.println("Permutation count: " + allPermutations.size());
@@ -114,23 +108,15 @@ public class CardStack {
                 System.out.println("Remaining valid: " + allValidPermsD1.size());
             }
             System.out.println("Valid: " + allValidPermsD1.size());
+            if (allValidPermsD1.size() == 1) {
 
-            System.out.println(allPermutations);
-            for (List<Integer> permutation : allPermutations) {
-                int[] ocPerDigit = new int[cardLength];
-                for (int d = 0; d < this.cardLength; d++) { // Iterate over every digit
-                    int oc = 0;
-                    for (int i = 0; i < permutation.size(); i++) { // Count ones on every card at given digit
-                        Card card = this.cards.get(permutation.get(i) - 1);
-                        if (card.getBoolAt(d)) oc++;
-                    }
-                    ocPerDigit[d] = oc;
-                }
-                System.out.println("Permutation: " + permutation + "; " + " OneCounts: " + Arrays.toString(ocPerDigit));
-                System.out.println("Valid: " + isValid(dInfos, ocPerDigit));
+                System.out.println(allValidPermsD1.get(0));
             }
-            break;
         }
+    }
+
+    private boolean isActuallyValid(List<Integer> shiftedIndexes, Card card) {
+        // TODO: Gen XOR of given Cards and compare
     }
 
     private List<DigitInfo> generateDigitInformation(boolean[] boolArray) {
@@ -145,7 +131,7 @@ public class CardStack {
                     maxOC = potMax;
                 }
             }
-            System.out.println("Digit " + digit + "; MAX oc " + maxOC + "; odd: " + b);
+            //System.out.println("Digit " + digit + "; MAX oc " + maxOC + "; odd: " + b);
             dInfos.add(new DigitInfo(digit, maxOC, b));
             digit++;
         }
