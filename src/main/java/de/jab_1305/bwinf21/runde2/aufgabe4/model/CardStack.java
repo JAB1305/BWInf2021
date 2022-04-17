@@ -2,6 +2,7 @@ package de.jab_1305.bwinf21.runde2.aufgabe4.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class CardStack {
@@ -103,11 +104,20 @@ public class CardStack {
             // Generate all Subsets (4 in 5) and validate with the given DInformation
 
 
-            List<List<Integer>> allPermutations = combination(this.cards.size(), this.targetCardCount);
+            LinkedList<LinkedList<Integer>> allPermutations = combination(this.cards.size(), this.targetCardCount);
             System.out.println("Permutation count: " + allPermutations.size());
+
+            LinkedList<LinkedList<Integer>> allValidPermsD1 = allPermutations; // TODO: Big performance upgrade: Dont start with all Perms
+
+            for (DigitInfo dInfo : dInfos) {
+                allValidPermsD1 = this.validate(allValidPermsD1, dInfo);
+                System.out.println("Remaining valid: " + allValidPermsD1.size());
+            }
+            System.out.println("Valid: " + allValidPermsD1.size());
+
             System.out.println(allPermutations);
             for (List<Integer> permutation : allPermutations) {
-                int[] ocPerDigit = new int[8];
+                int[] ocPerDigit = new int[cardLength];
                 for (int d = 0; d < this.cardLength; d++) { // Iterate over every digit
                     int oc = 0;
                     for (int i = 0; i < permutation.size(); i++) { // Count ones on every card at given digit
@@ -143,16 +153,16 @@ public class CardStack {
         return dInfos;
     }
 
-    public List<List<Integer>> combination(int n, int k) {
-        List<List<Integer>> result = new ArrayList<>();
-        backtrack(n, k, 1, result, new ArrayList<>());
+    public LinkedList<LinkedList<Integer>> combination(int n, int k) {
+        LinkedList<LinkedList<Integer>> result = new LinkedList<>();
+        backtrack(n, k, 1, result, new LinkedList<>());
         return result;
     }
 
-    public void backtrack(int n, int k, int startIndex, List<List<Integer>> result,
-                          List<Integer> partialList) {
+    public void backtrack(int n, int k, int startIndex, LinkedList<LinkedList<Integer>> result,
+                          LinkedList<Integer> partialList) {
         if (k == partialList.size()) {
-            result.add(new ArrayList<>(partialList));
+            result.add(new LinkedList<>(partialList));
             return;
         }
         for (int i = startIndex; i <= n; i++) {
@@ -164,8 +174,6 @@ public class CardStack {
 
     private boolean isValid(List<DigitInfo> digits, int[] ocPerDigit) {
         for (DigitInfo digit : digits) {
-            boolean isOdd = (ocPerDigit[digit.digit] % 2) == 0;
-            if (ocPerDigit[digit.digit] != 0 && isOdd != digit.odd) return false;
         }
         return true;
     }
@@ -174,5 +182,20 @@ public class CardStack {
         Card potXOR = this.cards.get(0);
         System.out.println("potXOR = " + potXOR.toString());
 
+    }
+
+    public LinkedList<LinkedList<Integer>> validate(LinkedList<LinkedList<Integer>> allPerms, DigitInfo digitInfo) {
+        LinkedList<LinkedList<Integer>> validPerms = new LinkedList<>();
+        for (LinkedList<Integer> allPerm : allPerms) {
+            int oc = 0;
+            for (Integer integer : allPerm) {
+                Card card = this.cards.get(integer - 1);
+                if (card.getBoolAt(digitInfo.digit)) oc++;
+            }
+            boolean isOdd = (oc % 2) == 0;
+            if (oc != 0 && isOdd != digitInfo.odd) continue;
+            validPerms.add(allPerm);
+        }
+        return validPerms;
     }
 }
