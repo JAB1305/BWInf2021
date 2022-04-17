@@ -93,7 +93,7 @@ public class CardStack {
     }
 
     public void findXOR() {
-        // FIXME: Es fehlt die Lösung???
+        // FIXME: Currently depth first reversal
         for (Card potXOR : cards) {
             boolean[] boolArray = potXOR.getBoolArray();
             List<DigitInfo> dInfos = this.generateDigitInformation(boolArray);
@@ -109,7 +109,7 @@ public class CardStack {
             }
             System.out.println("Valid: " + allValidPermsD1.size());
             if (allValidPermsD1.size() == 1) {
-
+                System.out.println(isActuallyValid(allValidPermsD1.get(0), potXOR) + " with potXOR " + (this.cards.indexOf(potXOR) + 1));
                 System.out.println(allValidPermsD1.get(0));
             }
         }
@@ -117,6 +117,22 @@ public class CardStack {
 
     private boolean isActuallyValid(List<Integer> shiftedIndexes, Card card) {
         // TODO: Gen XOR of given Cards and compare
+        int[] ocPerDigit = new int[cardLength];
+        int index = 0;
+        for (int i = 0; i < cardLength; i++) {
+            int oc = 0;
+            for (Integer shiftedIndex : shiftedIndexes) {
+                Card cardToAdd = this.cards.get(shiftedIndex - 1);
+                if (cardToAdd.getBoolAt(i)) oc++;
+            }
+            ocPerDigit[index] = oc;
+            index++;
+        }
+        for (int i = 0; i < card.getBoolArray().length; i++) {
+            if (((ocPerDigit[i] % 2) == 0) != card.getBoolAt(i) && ocPerDigit[i] != 0) return false;
+            if (ocPerDigit[i] == 0 && card.getBoolAt(i)) return false;
+        }
+        return true;
     }
 
     private List<DigitInfo> generateDigitInformation(boolean[] boolArray) {
