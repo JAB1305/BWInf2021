@@ -113,6 +113,8 @@ public class CardStack {
                 System.out.println(allValidPermsD1.get(0));
             }
         }
+
+        System.out.println(combination(4, 3));
     }
 
     private boolean isActuallyValid(List<Integer> shiftedIndexes, Card card) {
@@ -163,6 +165,7 @@ public class CardStack {
 
     public void backtrack(int n, int k, int startIndex, LinkedList<LinkedList<Integer>> result,
                           LinkedList<Integer> partialList) {
+        System.out.println(result.size());
         if (k == partialList.size()) {
             result.add(new LinkedList<>(partialList));
             return;

@@ -21,13 +21,13 @@ public class Aufgabe4 {
 
         Card xor = new Card("10010101", 8);
 
-        // FIXME: Ergibt das iwo Sinn? Wenn XOR reversibel ist, dann lösen die sich ja alle in das andere.
         ArrayList<Card> cards = loadFromFile("src/main/java/de/jab_1305/bwinf21/runde2/aufgabe4/examples/stapel0.txt");
         ArrayList<Card> lessCards = new ArrayList<>(Arrays.asList(xor, card, card2, card3, card4, card5));
 
-        CardStack lowScaleTest = new CardStack(cards, 32, 4);
+        CardStack lowScaleTest = new CardStack(cards, 32, 10);
         lowScaleTest.findXOR();
     }
+
 
     static ArrayList<Card> loadFromFile(String path) throws FileNotFoundException {
         Scanner s = new Scanner(new File(path));
