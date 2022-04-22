@@ -21,7 +21,7 @@ public class Aufgabe4 {
 
         Card xor = new Card("10010101", 8);
 
-        ArrayList<Card> cards = loadFromFile("src/main/java/de/jab_1305/bwinf21/runde2/aufgabe4/examples/stapel0.txt");
+        ArrayList<Card> cards = loadFromFile("src/main/java/de/jab_1305/bwinf21/runde2/aufgabe4/examples/stapel1.txt");
         ArrayList<Card> lessCards = new ArrayList<>(Arrays.asList(xor, card, card2, card3, card4, card5));
 
         CardStack lowScaleTest = new CardStack(cards, 32, 10);
