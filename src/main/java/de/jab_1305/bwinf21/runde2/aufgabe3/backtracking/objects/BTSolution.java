@@ -95,10 +95,10 @@ public class BTSolution implements Solution {
         // Bot cases -> BackTrack (reverse previous move)
         if (totalN > maxN || (this.totalN == maxN && this.totalB != 0) || (this.moves.size() == this.digits.size() && this.totalB != 0)) {
             if (this.nearestValidSolution != null) {
-                System.out.println("Nearest solution was used");
+                //System.out.println("Nearest solution was used");
             }
             FeedbackGen feedbackGen = new FeedbackGen(this, this.nearestValidSolution);
-            feedbackGen.printSummary(FeedbackGen.PURPLE);
+            //feedbackGen.printSummary(FeedbackGen.PURPLE);
             this.backTrack();
             return;
         }
@@ -155,8 +155,7 @@ public class BTSolution implements Solution {
                     this.moves.remove(moveToEdit);
                     recalculate();
 
-                    System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
-                    this.specialPriority = null;
+                    //System.out.println("Switched digit from index " + (this.nextDigitIndex + 1) + " to " + this.nextDigitIndex);
                     break;
                 } else if (isSet) {
                     BTMove moveToEdit = moves.get(indexToCheck);

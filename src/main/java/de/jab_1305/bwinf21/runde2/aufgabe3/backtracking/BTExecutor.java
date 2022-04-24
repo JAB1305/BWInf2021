@@ -10,7 +10,7 @@ public class BTExecutor {
 
     public static void main(String[] args) {
         ArrayList<BTDigit> digits = new ArrayList<>();
-        ArrayList<Num> nums = Num.valueOfMultipleDigitString("D24");
+        ArrayList<Num> nums = Num.valueOfMultipleDigitString("509C431B55");
 
         int i = 0;
         for (Num num : nums) {
