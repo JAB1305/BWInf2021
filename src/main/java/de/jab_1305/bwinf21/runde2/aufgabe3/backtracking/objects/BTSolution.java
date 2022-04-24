@@ -20,6 +20,9 @@ public class BTSolution implements Solution {
     // A valid solution was found on the path, if necessary fall back
     boolean solutionFound = false;
 
+    String prev = "";
+    int count = 0;
+
     BTBasicSolution nearestValidSolution = null;
 
     public BTSolution(ArrayList<BTDigit> digits, int maxN) {
@@ -35,6 +38,11 @@ public class BTSolution implements Solution {
     }
 
     public void addNewMove() throws RuntimeException {
+
+        System.out.println(currentNum().equals(prev) + " " + count);
+        prev = currentNum();
+        count++;
+
         BTMove nextMove = null;
         this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
 
@@ -71,6 +79,10 @@ public class BTSolution implements Solution {
             // Atm it is assumed that the specialPriority is valid on the next digit
             // FIXME: Assumption: Digit is shifted while specialPriority adjusted on a certain digit remains the same
             // Resulting in stackOverflow as the digitIndex isn't shifting??? DEBUG
+            // TODO: Validate existance, ei von Lars
+
+            // FIXME: maxPriority illegal on double-shift? DEBUG
+
             if (nextDigitToAddFrom.getMaxPriority() > specialPriority)
                 nextMove = nextDigitToAddFrom.getMoveByHierarchy(specialPriority);
             else {
@@ -145,7 +157,7 @@ public class BTSolution implements Solution {
                         != this.moves.get(indexToCheck).getPriority() + 1);
                 if (isEditable) {
                     // Sets the next Digit to the previous one
-                    this.nextDigitIndex--;
+                    this.nextDigitIndex = indexToCheck;
                     this.nextDigitToAddFrom = this.digits.get(this.nextDigitIndex);
 
                     // Get the second last added move
@@ -179,6 +191,18 @@ public class BTSolution implements Solution {
             this.totalN += move.getN();
             this.totalB += move.getB();
         }
+    }
+
+    private String currentNum() {
+        StringBuilder num = new StringBuilder();
+        for (int i = 0; i < digits.size(); i++) {
+            if (i < moves.size()) {
+                num.append(moves.get(i).getNum2().getHexSymbol());
+                continue;
+            }
+            num.append(digits.get(i).num.getHexSymbol());
+        }
+        return num.toString();
     }
 
     @Override

@@ -31,6 +31,7 @@ public class MoveCalculator {
 
             BTMove move = new BTMove(n1, n2, -1);
             out.setText("Moves: " + move.getN() + "; Bars: " + move.getB());
+            System.out.println("move.getB() = " + move.getB());
 
             assert n1 != null;
             assert n2 != null;
