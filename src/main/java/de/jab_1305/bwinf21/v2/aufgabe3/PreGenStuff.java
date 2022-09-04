@@ -25,26 +25,23 @@ public class PreGenStuff {
     }
 
     public void start() {
-        long x = 0;
-        int y = 0;
-
+        long m = 0; // benötigte Züge
+        int b = 0; // verfügbare Stäbchen
+        Num[] result = new Num[num.length];
         for (int i = 0; i < num.length; i++) {
-            System.out.println(i);
-            System.out.println("y = " + y);
-            for (Num num1 : num[i].getAllBiggerOnes()) {
-                System.out.println(".");
-                long newX = x + num[i].posDiff(num1);
-                int newY = y + num[i].remaining(num1);
-                long integer = this.necessaryMovesToNextValidNum(i, newY);
-                if (newX + integer <= 2L * n) {
-                    System.out.println("Found solution for digit " + i + ": " + this.num[i].toString() + " -> " + num1.toString());
-                    x = newX;
-                    y = newY;
+            Num current = this.num[i];
+            for (Num potentialNewNum : current.getAllBiggerOnes()) {
+                long newM = m + current.posDiff(potentialNewNum);
+                int newB = b + current.remaining(potentialNewNum);
+                long integer = this.necessaryMovesToNextValidNum(i, newB);
+                if (newM + integer <= 2L * n) {
+                    result[i] = potentialNewNum;
+                    m = newM;
+                    b = newB;
                     break;
                 }
             }
         }
-        System.out.println(Arrays.toString(num));
     }
 
     /**

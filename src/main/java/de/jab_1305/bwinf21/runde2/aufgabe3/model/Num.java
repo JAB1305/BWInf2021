@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 @Getter
 public enum Num {
 
-    //18.02.2022 15:41 - All valid, based on BWInf patterns#
-
     F(15, "F", new boolean[]{true, false, false, false, true, true, true}),
     E(14, "E", new boolean[]{true, false, false, true, true, true, true}),
     D(13, "D", new boolean[]{false, true, true, true, true, false, true}),
