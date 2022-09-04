@@ -131,6 +131,13 @@ public enum Num {
         return 0;
     }
 
+    public Num getLower() {
+        for (Num value : values()) {
+            if (this.absolute - 1 == value.absolute) return value;
+        }
+        return this;
+    }
+
     @Override
     public String toString() {
         return "{" + hexSymbol + "}";

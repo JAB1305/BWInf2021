@@ -20,13 +20,12 @@ public class BTExecutor {
             i++;
         }
 
-        // TODO: Compare performace with an "expected MAX" as start value
-
 
         long startTime = System.nanoTime();
         BTIterativeSolution solution = new BTIterativeSolution(digits, 8);
-        long endTime = System.nanoTime();
+        System.out.println(solution.toString());
 
+        long endTime = System.nanoTime();
         long duration = (endTime - startTime);
         System.out.println(duration / 1_000_000_000.0);
     }
