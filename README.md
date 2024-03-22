@@ -1,2 +1,2 @@
 # BWInf21
-Joa BWInf halt und iwie is zweite Runde ohne Repo bissl kacke
+Bearbeitung des Bundeswettbewerbs Informatik 2021, Lösungen der Aufgaben in branches
